@@ -30,7 +30,7 @@ class Red():
 		# Tecnicamente luego de propagar hacia adelante, hago
 		# el backprop de cada capa.
 		i = len(self.red)-1
-		k = len(estimulos)-1
+		k = len(estimulos)-2
 		gradientes = []
 		while(i >= 0):
 			gradientes = backprop(i,estimulos[k], gradientes)
