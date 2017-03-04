@@ -39,16 +39,17 @@ class Neuron():
             #print("Sigmoid|| "+str(self.funcion(self.campo)))
             return self.funcion(self.campo)
 
-    def gradienteLocal(self,vector):
+    def gradienteLocal(self,error):
         '''
             Calcula el gradiente local de la neurona
-            vector: No se que carajo hace
+            error: Si es de salida, vector debe ser el error de la neurona Dj - Yj
+                    Si es oculta, debe ser la sumatoria de los gradientes de las neuronas
+                    posteriores, por el correspondiente peso entre las mismas
         '''
-        if self.salida:
-            if self.lineal:
-                return vector[0]
-        #print(str(self.campo) + " " + str(sum(vector)) + " " + str(vector))
-        return self.dfuncion(self.campo)*sum(vector)
+        if self.lineal:
+            return error
+        else:
+            return error * self.dfuncion(self.campo)
 
     def actualizarPesos(self,vector):
         '''
