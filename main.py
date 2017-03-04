@@ -1,4 +1,5 @@
 import numpy
+import random
 
 class Neuron():
     '''
@@ -7,8 +8,8 @@ class Neuron():
         Lineal: Indica si la neurona es lineal (True) o sigmoidal (False por defecto)
         Salida: Indica si eres una neurona de salida, pues el gradiente es diferente
     '''
-    def __init__(self,eta = 0.01, pesos = [], lineal = False, salida = False):
-        self.pesos = pesos
+    def __init__(self,eta = 0.01, peso = 1, lineal = False, salida = False):
+        self.pesos = [random.uniform(0,1) for i in range(peso)]
         self.lineal = lineal
         self.eta = eta
         self.salida = salida
@@ -58,3 +59,5 @@ class Neuron():
         '''
         self.pesos = [ x + y for x, y in zip(self.pesos, vector)]
 	
+    def getPesos():
+        return self.pesos
