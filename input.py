@@ -22,7 +22,10 @@ eta = sys.argv[3]
 pesos = sys.argv[4]
 tabla = generar_df(leer_input(nombre))
 
-red = Red([6,1],int(pesos),float(eta))
+capa = []
+for i in range(int(capas)):
+	capa += [int(input("Introduzca la cantidad de neuronas de la capa " + str(i+1) + ": "))]
+red = Red(capa,int(pesos),float(eta))
 
 epoca = 0
 error = 0
