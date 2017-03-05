@@ -43,6 +43,10 @@ while (epoca < 500 and abs(errorAnt - error) >= 0.00001):
 	print(error)
 
 buenos = 0
+
+fig, ax = plt.subplots()
+circle2 = plt.Circle((10, 10), 6, color='b', fill=False)
+ax.add_artist(circle2)
 for i in range(len(tabla)):
 	estimulo = [tabla["x"][i],tabla["y"][i]]
 	result = red.calcular(estimulo)
@@ -52,6 +56,18 @@ for i in range(len(tabla)):
 		salida = 0
 
 	if(salida == tabla["resultado"][i]):
+		if (salida == 0):
+			plt.plot(tabla["x"][i], tabla["y"][i], 'ro')
+		else:
+			plt.plot(tabla["x"][i], tabla["y"][i], 'bo')
 		buenos += 1
-print(buenos)
+	else:
+		if (salida == 0):
+			plt.plot(tabla["x"][i], tabla["y"][i], 'r*')
+		else:
+			plt.plot(tabla["x"][i], tabla["y"][i], 'b*')
+print(str(buenos) + " " + str(500))
+plt.axis([0, 20, 0, 20])
+plt.axis('equal')
+plt.show()
 	
