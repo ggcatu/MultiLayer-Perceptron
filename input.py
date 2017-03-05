@@ -2,6 +2,7 @@ import pandas
 import numpy as np
 import sys
 import matplotlib.pyplot as plt
+from red import Red
 
 def leer_input(fichero):
 	resultado = pandas.read_table(fichero,sep= " ", header = None)
