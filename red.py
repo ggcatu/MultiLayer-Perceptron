@@ -40,7 +40,7 @@ class Red():
 		k = len(estimulos)-1
 		gradientes = []
 		while(i >= 0):
-			gradientes = backprop(i,estimulos[k], gradientes)
+			gradientes = self.backprop(i,estimulos[k], gradientes)
 			k -= 1
 			i -= 1
 
@@ -51,20 +51,21 @@ class Red():
 		grad =[]
 		if(i == len(self.red)-1):
 			for j in range(len(self.red[i])):
-				salida = self.red[i][j].calcular(entradas)
+				salida = self.red[i][j].calcular(estimulos)
 				gradiente = self.red[i][j].gradienteLocal(self.resultado-salida)
 				grad += [gradiente]
 				self.red[i][j].actualizarPesos
 				([gradiente*estimulos[k]*self.red[i][j].eta for k in range(len(estimulos))])
 		else:
 			for j in range(len(self.red[i])):
-				gradiente = self.red[i][j].gradienteLocal
-				(sum(gradientes[k]*estimulos[k] for k in range(len(gradientes))))
+				error = sum(gradientes[k]*estimulos[k] for k in range(len(gradientes)))
+				gradiente = self.red[i][j].gradienteLocal(error)
 				grad += [gradiente]
-				self.red[i][j].actualizarPesos
-				([gradiente*estimulos[k]*self.red[i][j].eta for k in range(len(estimulos))])	
+				ve = [gradiente*estimulos[k]*self.red[i][j].eta for k in range(len(estimulos))]
+				self.red[i][j].actualizarPesos(ve)	
 		return grad
 
 if __name__ == "__main__":
 	red = Red([2,3,1], 2, 5)
 	print(red.calcular([2,3]))
+	print(red.propagar([2,3]))
