@@ -47,7 +47,8 @@ if(len(sys.argv) != 7):
 	print("   instancia: Ruta del archivo con las instancias")
 	print("   capas: Cantidad de capas que tendra la red")
 	print("   learningRate: Factor de aprendizaje para la red")
-	print("   test: Ruta del archivo para validar")
+	print("   test: En caso de ser el problema 0 la ruta del archivo de validacion") 
+	print("         Si es el problema 1 el porcentaje de datos para entranar")
 	sys.exit()
 
 
@@ -63,11 +64,12 @@ if(problema == "0"):
 	tabla = generar_df(leer_input(nombre))
 	#normalizar(tabla)
 else:
-	tabla = generar_df_iris(leer_input_iris(nombre))
+	prueba = generar_df_iris(leer_input_iris(nombre))
 	if(tipo == "0"):
-		binario_iris(tabla)
+		binario_iris(prueba)
 	else:
-		iris(tabla)
+		iris(prueba)
+	tabla = prueba.sample(frac = float(test_set),random_state = 200)
 	#normalizar_iris(tabla)
 
 columnas = []
@@ -87,71 +89,96 @@ while (epoca < 500 and abs(errorAnt - error) >= 0.000001):
 	print(epoca)
 	errorAnt = error
 	error = 0
-	for i in range(len(tabla)):
+	for index, row in tabla.iterrows():
 		estimulo = []
 		for j in range(len(columnas)-1):
-			estimulo.append(tabla[columnas[j]][i])
-		result = red.propagar(estimulo,tabla[columnas[-1]][i])
-		error += (tabla[columnas[-1]][i] - max(result))**2
+			estimulo.append(row[columnas[j]])
+		result = red.propagar(estimulo,row[columnas[-1]])
+		error += (row[columnas[-1]] - max(result))**2
 	error = error/(2*len(tabla))
 	print(error)
 
 buenos = 0
 result = []
 
-fig, ax = plt.subplots()
-circle2 = plt.Circle((10, 10), 6, color='b', fill=False)
-ax.add_artist(circle2)
-
-'''
-for i in range(len(tabla)):
-	estimulo = []
-	for j in range(len(columnas)-1):
-		estimulo.append(tabla[columnas[j]][i])
-	result = red.calcular(estimulo)
-	print(result)
-	if(max(result) < 1):
-		salida = 0
-	elif(max(result) >= 1 and max(result) < 2):
-		salida = 1
-	else:
-		salida = 2
-	if(salida == tabla["resultado"][i]):
-		buenos += 1
-print(buenos)
-
-'''
-error_prueba = 0
-falsos_positivos = 0
-falsos_negativos = 0
-fig, ax = plt.subplots()
-circle2 = plt.Circle((10, 10), 6, color='b', fill=False)
-ax.add_artist(circle2)
-for i in range(len(prueba)):
-	estimulo = [prueba["x"][i],prueba["y"][i]]
-	result = red.calcular(estimulo)
-	error_prueba += (prueba["resultado"][i] - result)**2
-	if(result[0] >= 0.5):
-		salida = 1
-	else:
-		salida = 0
-	if(salida == prueba["resultado"][i]):
-		if (salida == 0):
-			plt.plot(prueba["x"][i], prueba["y"][i], 'ro')
+if(problema == "0"):
+	error_prueba = 0
+	falsos_positivos = 0
+	falsos_negativos = 0
+	fig, ax = plt.subplots()
+	circle2 = plt.Circle((10, 10), 6, color='b', fill=False)
+	ax.add_artist(circle2)
+	for i in range(len(prueba)):
+		estimulo = [prueba["x"][i],prueba["y"][i]]
+		result = red.calcular(estimulo)
+		error_prueba += (prueba["resultado"][i] - max(result))**2
+		if(max(result) >= 0.5):
+			salida = 1
 		else:
-			plt.plot(prueba["x"][i], prueba["y"][i], 'bo')
-	else:
-		if (salida == 0):
-			falsos_negativos += 1
-			plt.plot(prueba["x"][i], prueba["y"][i], 'r*')
+			salida = 0
+		if(salida == prueba["resultado"][i]):
+			if (salida == 0):
+				plt.plot(prueba["x"][i], prueba["y"][i], 'ro')
+			else:
+				plt.plot(prueba["x"][i], prueba["y"][i], 'bo')
 		else:
-			falsos_positivos += 1
-			plt.plot(prueba["x"][i], prueba["y"][i], 'b*')
-error_prueba = error_prueba/(2*len(prueba))
-print("Error en el Entrenamiento: " + str(error))
-print("Error en la Prueba: " + str(error_prueba))
-print("Falsos Positivos: " + str(falsos_positivos))
-print("Falsos Negativos: " + str(falsos_negativos))
-plt.axis([0, 20, 0, 20])
-plt.axis('equal')
-plt.show()
+			if (salida == 0):
+				falsos_negativos += 1
+				plt.plot(prueba["x"][i], prueba["y"][i], 'r*')
+			else:
+				falsos_positivos += 1
+				plt.plot(prueba["x"][i], prueba["y"][i], 'b*')
+	error_prueba = error_prueba/(2*len(prueba))
+	print("Error en el Entrenamiento: " + str(error))
+	print("Error en la Prueba: " + str(error_prueba))
+	print("Falsos Positivos: " + str(falsos_positivos))
+	print("Falsos Negativos: " + str(falsos_negativos))
+	plt.axis([0, 20, 0, 20])
+	plt.axis('equal')
+	plt.show()
+else:
+	error_prueba = 0
+	falsos_positivos = 0
+	falsos_negativos = 0
+	if(tipo == "0"):
+		for i in range(len(prueba)):
+			estimulo = []
+			for j in range(len(columnas)-1):
+				estimulo.append(prueba[columnas[j]][i])
+			result = red.calcular(estimulo)
+			error_prueba += (prueba["resultado"][i] - max(result))**2
+			if(max(result) >= 0.5):
+				salida = 1
+			else:
+				salida = 0
+			if(salida == prueba["resultado"][i]):
+				buenos += 1
+			else:
+				if(salida == 0):
+					falsos_negativos += 1
+				else:
+					falsos_positivos += 1
+		error_prueba = error_prueba/(2*len(prueba))
+		print("Error en el Entrenamiento: " + str(error))
+		print("Error en la Prueba: " + str(error_prueba))
+		print("Falsos Positivos: " + str(falsos_positivos))
+		print("Falsos Negativos: " + str(falsos_negativos))
+	else:
+		for i in range(len(prueba)):
+			estimulo = []
+			for j in range(len(columnas)-1):
+				estimulo.append(prueba[columnas[j]][i])
+			result = red.calcular(estimulo)
+			error_prueba += (prueba["resultado"][i] - max(result))**2
+			if(max(result) < 1):
+				salida = 0
+			elif(max(result) >= 1 and max(result) < 2):
+				salida = 1
+			else:
+				salida = 2
+			if(salida == prueba["resultado"][i]):
+				buenos += 1
+		error_prueba = error_prueba/(2*len(prueba))
+		print("Error en el Entrenamiento: " + str(error))
+		print("Error en la Prueba: " + str(error_prueba))
+	print(buenos)
