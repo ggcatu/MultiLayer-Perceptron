@@ -5,9 +5,8 @@ from main import Neuron
 
 class Red():
 
-	def __init__(self,arregloN, atr, resultados):
+	def __init__(self,arregloN, atr):
 		self.red = []
-		self.resultado = resultados
 		numero = atr
 		eta = 0.1
 		for i in range(0,len(arregloN)):
@@ -27,11 +26,12 @@ class Red():
 		return estimulos
 
 	def calcular(self, entradas):
-		return self.__calc(entradas)[-1][0]
+		return self.__calc(entradas)[-1]
+
 	# Paso primero las entradas y propago hacia adelante
 	# haciendo un arreglo de estimulos en el cual esta que
 	# le entra a la capa [i]
-	def propagar(self,entradas):
+	def propagar(self,entradas,resultado):
 		estimulos = self.__calc(entradas)
 
 		# Tecnicamente luego de propagar hacia adelante, hago
@@ -40,34 +40,25 @@ class Red():
 		k = len(estimulos)-2
 		gradientes = []
 		while(i >= 0):
-			gradientes = self.backprop(i,estimulos[k], gradientes)
+			gradientes = self.backprop(i,estimulos[k], gradientes,resultado)
 			k -= 1
 			i -= 1
+		return estimulos[-1]
 
 	# Propago una capa hacia atras, la capa i 
 	# la recorro, calculo sus gradientes y actualizo con
 	# las reglas para cada capa y retorno los gradientes
-	def backprop(self,i,estimulos,gradientes):
+	def backprop(self,i,estimulos,gradientes,resultado):
 		grad =[]
 		if(i == len(self.red)-1):
 			for j in range(len(self.red[i])):
 				salida = self.red[i][j].calcular(estimulos)
-				gradiente = self.red[i][j].gradienteLocal(self.resultado-salida)
-				#print("Gradiente {}".format(gradiente))
+				gradiente = self.red[i][j].gradienteLocal(resultado-salida)
 				grad += [gradiente]
-				#print("WEPA")
-				#print(estimulos)
-				#print([gradiente*estimulos[k]*self.red[i][j].eta for k in range(len(estimulos))])
 				ve = [gradiente*estimulos[k]*self.red[i][j].eta for k in range(len(estimulos))]
 				self.red[i][j].actualizarPesos(ve)
 		else:
 			for j in range(len(self.red[i])):
-				# print(i , j)
-				# print(gradientes)
-				# print(len(gradientes))
-				# print(self.red[i+1])
-				# print(len(self.red[i+1]))
-				# print(self.red[i+1][0].pesos)
 				error = sum(gradientes[k]*self.red[i+1][k].pesos[j] for k in range(len(gradientes)))
 				gradiente = self.red[i][j].gradienteLocal(error)
 				grad += [gradiente]
@@ -76,8 +67,8 @@ class Red():
 		return grad
 
 if __name__ == "__main__":
-	red = Red([2,3,1], 2, 5)
+	red = Red([2,3,1], 2)
 	print(red.red[2][0].pesos)
 	print(red.calcular([2,3]))
 	print(red.red[2][0].pesos)
-	print(red.propagar([2,3]))
+	print(red.propagar([2,3],5))
