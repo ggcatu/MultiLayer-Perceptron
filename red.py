@@ -31,8 +31,8 @@ class Red():
 	# Paso primero las entradas y propago hacia adelante
 	# haciendo un arreglo de estimulos en el cual esta que
 	# le entra a la capa [i]
-	def propagar(entradas):
-		estimulos = calcular(entradas)
+	def propagar(self,entradas):
+		estimulos = self.__calc(entradas)
 
 		# Tecnicamente luego de propagar hacia adelante, hago
 		# el backprop de cada capa.
@@ -47,7 +47,7 @@ class Red():
 	# Propago una capa hacia atras, la capa i 
 	# la recorro, calculo sus gradientes y actualizo con
 	# las reglas para cada capa y retorno los gradientes
-	def backprop(i,estimulos,gradientes):
+	def backprop(self,i,estimulos,gradientes):
 		grad =[]
 		if(i == len(self.red)-1):
 			for j in range(len(self.red[i])):
