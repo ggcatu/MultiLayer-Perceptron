@@ -1,5 +1,6 @@
 import numpy
 import random
+import math
 
 class Neuron():
     '''
