@@ -2,6 +2,7 @@ import pandas
 import numpy as np
 import sys
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 from red import Red
 
 def leer_input(fichero):
@@ -51,7 +52,6 @@ if(len(sys.argv) != 7):
 	print("         Si es el problema 1 el porcentaje de datos para entranar")
 	sys.exit()
 
-
 problema = sys.argv[1]
 tipo = sys.argv[2]
 nombre = sys.argv[3]
@@ -73,6 +73,8 @@ else:
 	#normalizar_iris(tabla)
 
 columnas = []
+errores = []
+errores_test = []
 for columna in tabla:
 	columnas.append(columna)
 
@@ -84,7 +86,7 @@ red = Red(capa,len(columnas)-1,float(eta))
 epoca = 0
 error = 0
 errorAnt = 1000
-while (epoca < 500 and abs(errorAnt - error) >= 0.000001):
+while (epoca < 5 and abs(errorAnt - error) >= 0.000001):
 	epoca += 1
 	print(epoca)
 	errorAnt = error
@@ -96,6 +98,7 @@ while (epoca < 500 and abs(errorAnt - error) >= 0.000001):
 		result = red.propagar(estimulo,row[columnas[-1]])
 		error += (row[columnas[-1]] - max(result))**2
 	error = error/(2*len(tabla))
+	errores.append(error)
 	print(error)
 
 buenos = 0
@@ -118,23 +121,29 @@ if(problema == "0"):
 			salida = 0
 		if(salida == prueba["resultado"][i]):
 			if (salida == 0):
-				plt.plot(prueba["x"][i], prueba["y"][i], 'ro')
+				puntos, = plt.plot(prueba["x"][i], prueba["y"][i], 'ro')
 			else:
-				plt.plot(prueba["x"][i], prueba["y"][i], 'bo')
+				puntos2, = plt.plot(prueba["x"][i], prueba["y"][i], 'bo')
 		else:
 			if (salida == 0):
 				falsos_negativos += 1
-				plt.plot(prueba["x"][i], prueba["y"][i], 'r*')
+				estrellas, = plt.plot(prueba["x"][i], prueba["y"][i], 'r*')
 			else:
 				falsos_positivos += 1
-				plt.plot(prueba["x"][i], prueba["y"][i], 'b*')
+				estrellas2, = plt.plot(prueba["x"][i], prueba["y"][i], 'b*')
 	error_prueba = error_prueba/(2*len(prueba))
+	errores_test.append(error_prueba)
 	print("Error en el Entrenamiento: " + str(error))
 	print("Error en la Prueba: " + str(error_prueba))
 	print("Falsos Positivos: " + str(falsos_positivos))
 	print("Falsos Negativos: " + str(falsos_negativos))
+	plt.title("Validación de Red Neural con una capa oculta de " + str(capas) + " Neuronas")
 	plt.axis([0, 20, 0, 20])
 	plt.axis('equal')
+	plt.legend([puntos],["Externo (Bien Clasificado)"], loc=10)
+	plt.legend([puntos2],["Interno (Bien Clasificado)"])
+	plt.legend([estrellas],["Externo (Mal Clasificado)"])
+	plt.legend([estrellas2],["Interno (Mal Clasificado)"])
 	plt.show()
 else:
 	error_prueba = 0
@@ -182,3 +191,11 @@ else:
 		print("Error en el Entrenamiento: " + str(error))
 		print("Error en la Prueba: " + str(error_prueba))
 	print(buenos)
+
+fig2 = plt.figure()
+rango = np.linspace(1,epoca,epoca)
+plt.plot(rango,errores,"g-",linewidth = 2, color = "blue")
+plt.title("Convergencia del Error de Entrenamiento")
+plt.xlabel("Épocas")
+plt.ylabel("Error de Entrenamiento")
+plt.show()

@@ -65,7 +65,7 @@ class Red():
 				ve = [gradiente*estimulos[k]*self.red[i][j].eta for k in range(len(estimulos))]
 				self.red[i][j].actualizarPesos(ve)	
 		return grad
-
+'''
 if __name__ == "__main__":
 	red = Red([6,5,1], 2, 0.1)
 	for x in range(500):
@@ -77,4 +77,4 @@ if __name__ == "__main__":
 	print(red.calcular([1,1,1])[0])
 	print(red.calcular([1,1,0])[0])
 	print(red.calcular([1,0,0])[0])
-
+'''
