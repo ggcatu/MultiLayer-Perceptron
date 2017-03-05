@@ -10,13 +10,13 @@ class Neuron():
         Salida: Indica si eres una neurona de salida, pues el gradiente es diferente
     '''
     def __init__(self,eta = 0.01, peso = 1, lineal = False, salida = False):
-        self.pesos = [random.uniform(0,1) for i in range(peso)]
+        self.pesos = [random.uniform(0,0.5) for i in range(peso)]
         self.lineal = lineal
         self.eta = eta
         self.salida = salida
         self.campo = 0
-        self.funcion = lambda x: 1-math.exp(-x)
-        self.dfuncion = lambda x: math.exp(-x)
+        self.funcion = lambda x: 1/(1+math.exp(-x))
+        self.dfuncion = lambda x: self.funcion(x)*(1-self.funcion(x))
 
     def __producto(self,entradas):
         '''
@@ -24,7 +24,7 @@ class Neuron():
             Entradas: Vector a evaluar en la neurona
         '''
         if len(self.pesos) != len(entradas):
-            print("Error de entrada")
+            print("error de entrada: "+ str(len(self.pesos)) +";"+str(len(entradas)))
         return sum(entrada*peso for entrada,peso in zip(entradas,self.pesos))
 
     def calcular(self,entradas):

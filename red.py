@@ -5,15 +5,15 @@ from main import Neuron
 
 class Red():
 
-	def __init__(self,arregloN, atr):
+	def __init__(self,arregloN, atr, eta):
 		self.red = []
 		numero = atr
-		eta = 0.1
+		eta = eta
 		for i in range(0,len(arregloN)):
 			if(i != len(arregloN)-1):
-				self.red += [[Neuron(eta,numero) for j in range(arregloN[i])]]
+				self.red += [[Neuron(eta = eta,peso = numero) for j in range(arregloN[i])]]
 			else:
-				self.red += [[Neuron(eta,numero,lineal = True,salida = True) for j in range(arregloN[i])]]
+				self.red += [[Neuron(eta = eta,peso = numero,lineal = True,salida = True) for j in range(arregloN[i])]]
 			numero = arregloN[i]
 
 	def __calc(self, entradas):
@@ -65,10 +65,11 @@ class Red():
 				ve = [gradiente*estimulos[k]*self.red[i][j].eta for k in range(len(estimulos))]
 				self.red[i][j].actualizarPesos(ve)	
 		return grad
-
+'''
 if __name__ == "__main__":
 	red = Red([2,3,1], 2)
 	print(red.red[2][0].pesos)
 	print(red.calcular([2,3]))
 	print(red.red[2][0].pesos)
 	print(red.propagar([2,3],5))
+'''

@@ -19,5 +19,36 @@ def normalizar(data_frame):
 nombre = sys.argv[1]
 capas = sys.argv[2]
 eta = sys.argv[3]
-neurons = sys.argv[4]
+pesos = sys.argv[4]
 tabla = generar_df(leer_input(nombre))
+
+red = Red([6,1],int(pesos),float(eta))
+
+epoca = 0
+error = 0
+errorAnt = 1000
+while (epoca < 500 and abs(errorAnt - error) >= 0.00001):
+	epoca += 1
+	print(epoca)
+	errorAnt = error
+	error = 0
+	for i in range(len(tabla)):
+		estimulo = [tabla["x"][i],tabla["y"][i]]
+		result = red.propagar(estimulo,tabla["resultado"][i])
+		error += (tabla["resultado"][i] - result)**2
+	error = error/(2*len(tabla))
+	print(error)
+
+buenos = 0
+for i in range(len(tabla)):
+	estimulo = [tabla["x"][i],tabla["y"][i]]
+	result = red.calcular(estimulo)
+	if(result[0] >= 0.5):
+		salida = 1
+	else:
+		salida = 0
+
+	if(salida == tabla["resultado"][i]):
+		buenos += 1
+print(buenos)
+	
