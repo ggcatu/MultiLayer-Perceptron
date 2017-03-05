@@ -15,7 +15,6 @@ def generar_df(in_matrix):
 def normalizar(data_frame):
 	cols_to_norm = ["x","y"]
 	data_frame[cols_to_norm] = data_frame[cols_to_norm].apply(lambda x: (x-x.mean())/x.std() )
-
 def leer_input_iris(fichero):
 	resultado = pandas.read_table(fichero,sep= ",", header = None)
 	return resultado
@@ -40,14 +39,15 @@ def iris(data_frame):
 		else:
 			data_frame["resultado"][i] = 2
 
-if(len(sys.argv) != 6):
-	print("Uso: python3 " + sys.argv[0] + " problema tipo instancia capas learningRate")
+if(len(sys.argv) != 7):
+	print("Uso: python3 " + sys.argv[0] + " problema tipo instancia capas learningRate test")
 	print("")
 	print("   problema: 0 para patrones (x,y), 1 para datos iris")
 	print("   tipo: 0 para clasificacion binaria, 1 para clasificacion por clases")
 	print("   instancia: Ruta del archivo con las instancias")
 	print("   capas: Cantidad de capas que tendra la red")
 	print("   learningRate: Factor de aprendizaje para la red")
+	print("   test: Ruta del archivo para validar")
 	sys.exit()
 
 
@@ -56,17 +56,19 @@ tipo = sys.argv[2]
 nombre = sys.argv[3]
 capas = sys.argv[4]
 eta = sys.argv[5]
+test_set = sys.argv[6]
 
 if(problema == "0"):
+	prueba = generar_df(leer_input(test_set))
 	tabla = generar_df(leer_input(nombre))
-	normalizar(tabla)
+	#normalizar(tabla)
 else:
 	tabla = generar_df_iris(leer_input_iris(nombre))
 	if(tipo == "0"):
 		binario_iris(tabla)
 	else:
 		iris(tabla)
-	normalizar_iris(tabla)
+	#normalizar_iris(tabla)
 
 columnas = []
 for columna in tabla:
@@ -119,29 +121,37 @@ for i in range(len(tabla)):
 print(buenos)
 
 '''
-for i in range(len(tabla)):
-	estimulo = []
-	for j in range(len(columnas)-1):
-		estimulo.append(tabla[columnas[j]][i])
+error_prueba = 0
+falsos_positivos = 0
+falsos_negativos = 0
+fig, ax = plt.subplots()
+circle2 = plt.Circle((10, 10), 6, color='b', fill=False)
+ax.add_artist(circle2)
+for i in range(len(prueba)):
+	estimulo = [prueba["x"][i],prueba["y"][i]]
 	result = red.calcular(estimulo)
+	error_prueba += (prueba["resultado"][i] - result)**2
 	if(result[0] >= 0.5):
 		salida = 1
 	else:
 		salida = 0
-	print(result)
-	print(str(salida) + ";" + str(tabla["resultado"][i]))
-	if(salida == tabla["resultado"][i]):
+	if(salida == prueba["resultado"][i]):
 		if (salida == 0):
-			plt.plot(tabla["x"][i], tabla["y"][i], 'ro')
+			plt.plot(prueba["x"][i], prueba["y"][i], 'ro')
 		else:
-			plt.plot(tabla["x"][i], tabla["y"][i], 'bo')
-		buenos += 1
+			plt.plot(prueba["x"][i], prueba["y"][i], 'bo')
 	else:
 		if (salida == 0):
-			plt.plot(tabla["x"][i], tabla["y"][i], 'r*')
+			falsos_negativos += 1
+			plt.plot(prueba["x"][i], prueba["y"][i], 'r*')
 		else:
-			plt.plot(tabla["x"][i], tabla["y"][i], 'b*')
-print(str(buenos) + " " + str(500))
+			falsos_positivos += 1
+			plt.plot(prueba["x"][i], prueba["y"][i], 'b*')
+error_prueba = error_prueba/(2*len(prueba))
+print("Error en el Entrenamiento: " + str(error))
+print("Error en la Prueba: " + str(error_prueba))
+print("Falsos Positivos: " + str(falsos_positivos))
+print("Falsos Negativos: " + str(falsos_negativos))
 plt.axis([0, 20, 0, 20])
 plt.axis('equal')
 plt.show()
