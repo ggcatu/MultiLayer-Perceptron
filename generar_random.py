@@ -26,7 +26,9 @@ def generar(numero):
         d = completar(d,c_d,True)
     else:
         f = completar(f,c_f,False)
-    return d,f
+    d = d + f
+    random.shuffle(d)
+    return d
 
 def completar(d,limite,boo):
     while len(d) < limite:
@@ -35,9 +37,9 @@ def completar(d,limite,boo):
             d.append(g+[int(boo)])
     return d
 
-d, f = generar(1000)
-tabla = pandas.DataFrame(data = d+f)
-tabla.to_csv("1000.txt",sep = " ", header=False, index = False)
+d = generar(2000)
+tabla = pandas.DataFrame(data = d)
+tabla.to_csv("gen_N2000.txt",sep = " ", header=False, index = False)
         
 
 
