@@ -86,7 +86,7 @@ red = Red(capa,len(columnas)-1,float(eta))
 epoca = 0
 error = 0
 errorAnt = 1000
-while (epoca < 5 and abs(errorAnt - error) >= 0.000001):
+while (epoca < 500 and abs(errorAnt - error) >= 0.000001):
 	epoca += 1
 	print(epoca)
 	errorAnt = error
@@ -111,6 +111,7 @@ if(problema == "0"):
 	fig, ax = plt.subplots()
 	circle2 = plt.Circle((10, 10), 6, color='b', fill=False)
 	ax.add_artist(circle2)
+	helper = [0,0,0,0]
 	for i in range(len(prueba)):
 		estimulo = [prueba["x"][i],prueba["y"][i]]
 		result = red.calcular(estimulo)
@@ -121,16 +122,24 @@ if(problema == "0"):
 			salida = 0
 		if(salida == prueba["resultado"][i]):
 			if (salida == 0):
-				puntos, = plt.plot(prueba["x"][i], prueba["y"][i], 'ro')
+				lr = None if helper[0] else "Externo (Bien Clasificado)"
+				puntos = plt.plot(prueba["x"][i], prueba["y"][i], 'ro', label = lr)
+				helper[0] += 1
 			else:
-				puntos2, = plt.plot(prueba["x"][i], prueba["y"][i], 'bo')
+				lr = None if helper[1] else "Interno (Bien Clasificado)"
+				puntos2 = plt.plot(prueba["x"][i], prueba["y"][i], 'bo', label = lr)
+				helper[1] += 1
 		else:
 			if (salida == 0):
 				falsos_negativos += 1
-				estrellas, = plt.plot(prueba["x"][i], prueba["y"][i], 'r*')
+				lr = None if helper[2] else "Externo (Mal Clasificado)"
+				estrellas = plt.plot(prueba["x"][i], prueba["y"][i], 'r*', label = lr)
+				helper[2] += 1
 			else:
 				falsos_positivos += 1
-				estrellas2, = plt.plot(prueba["x"][i], prueba["y"][i], 'b*')
+				lr = None if helper[3] else "Interno (Mal Clasificado)"
+				estrellas2 = plt.plot(prueba["x"][i], prueba["y"][i], 'b*', label = lr)
+				helper[3] += 1
 	error_prueba = error_prueba/(2*len(prueba))
 	errores_test.append(error_prueba)
 	print("Error en el Entrenamiento: " + str(error))
@@ -140,10 +149,12 @@ if(problema == "0"):
 	plt.title("Validación de Red Neural con una capa oculta de " + str(capas) + " Neuronas")
 	plt.axis([0, 20, 0, 20])
 	plt.axis('equal')
-	plt.legend([puntos],["Externo (Bien Clasificado)"], loc=10)
-	plt.legend([puntos2],["Interno (Bien Clasificado)"])
-	plt.legend([estrellas],["Externo (Mal Clasificado)"])
-	plt.legend([estrellas2],["Interno (Mal Clasificado)"])
+	plt.legend(loc=1, ncol=1)
+	#plt.legend([puntos],["Externo (Bien Clasificado)"], loc=10)
+	#plt.legend([puntos2],["Interno (Bien Clasificado)"])
+	#plt.legend([estrellas],["Externo (Mal Clasificado)"])
+	#plt.legend([estrellas2],["Interno (Mal Clasificado)"])
+	plt.tight_layout()
 	plt.show()
 else:
 	error_prueba = 0
