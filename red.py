@@ -7,7 +7,7 @@ class Red():
 
 	def __init__(self,arregloN, atr, eta):
 		self.red = []
-		numero = atr
+		numero = atr+1
 		eta = eta
 		for i in range(0,len(arregloN)):
 			if(i != len(arregloN)-1):
@@ -65,11 +65,16 @@ class Red():
 				ve = [gradiente*estimulos[k]*self.red[i][j].eta for k in range(len(estimulos))]
 				self.red[i][j].actualizarPesos(ve)	
 		return grad
-'''
+
 if __name__ == "__main__":
-	red = Red([2,3,1], 2)
-	print(red.red[2][0].pesos)
-	print(red.calcular([2,3]))
-	print(red.red[2][0].pesos)
-	print(red.propagar([2,3],5))
-'''
+	red = Red([6,5,1], 2, 0.1)
+	for x in range(500):
+		red.propagar([1,0,1],1)
+		red.propagar([1,1,1],1)
+		red.propagar([1,1,0],1)
+		red.propagar([1,0,0],0)
+	print(red.calcular([1,0,1])[0])
+	print(red.calcular([1,1,1])[0])
+	print(red.calcular([1,1,0])[0])
+	print(red.calcular([1,0,0])[0])
+
