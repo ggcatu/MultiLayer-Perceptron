@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pandas
 import numpy as np
 import sys
@@ -122,22 +123,22 @@ if(problema == "0"):
 			salida = 0
 		if(salida == prueba["resultado"][i]):
 			if (salida == 0):
-				lr = None if helper[0] else "Externo (Bien Clasificado)"
+				lr = None if helper[0] else "Verdadero Negativo"
 				puntos = plt.plot(prueba["x"][i], prueba["y"][i], 'ro', label = lr)
 				helper[0] += 1
 			else:
-				lr = None if helper[1] else "Interno (Bien Clasificado)"
+				lr = None if helper[1] else "Verdadero Positivo"
 				puntos2 = plt.plot(prueba["x"][i], prueba["y"][i], 'bo', label = lr)
 				helper[1] += 1
 		else:
 			if (salida == 0):
 				falsos_negativos += 1
-				lr = None if helper[2] else "Externo (Mal Clasificado)"
+				lr = None if helper[2] else "Falso Negativo"
 				estrellas = plt.plot(prueba["x"][i], prueba["y"][i], 'r*', label = lr)
 				helper[2] += 1
 			else:
 				falsos_positivos += 1
-				lr = None if helper[3] else "Interno (Mal Clasificado)"
+				lr = None if helper[3] else "Falso Positivo"
 				estrellas2 = plt.plot(prueba["x"][i], prueba["y"][i], 'b*', label = lr)
 				helper[3] += 1
 	error_prueba = error_prueba/(2*len(prueba))
@@ -146,10 +147,11 @@ if(problema == "0"):
 	print("Error en la Prueba: " + str(error_prueba))
 	print("Falsos Positivos: " + str(falsos_positivos))
 	print("Falsos Negativos: " + str(falsos_negativos))
-	plt.title("Validación de Red Neural con una capa oculta de " + str(capas) + " Neuronas")
+	plt.title("Validacion de Red Neural con una capa oculta de " + str(capas) + " Neuronas")
 	plt.axis([0, 20, 0, 20])
 	plt.axis('equal')
-	plt.legend(loc=1, ncol=1)
+	plt.subplots_adjust(right = 0.4)
+	plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
 	#plt.legend([puntos],["Externo (Bien Clasificado)"], loc=10)
 	#plt.legend([puntos2],["Interno (Bien Clasificado)"])
 	#plt.legend([estrellas],["Externo (Mal Clasificado)"])
@@ -206,7 +208,7 @@ else:
 fig2 = plt.figure()
 rango = np.linspace(1,epoca,epoca)
 plt.plot(rango,errores,"g-",linewidth = 2, color = "blue")
-plt.title("Convergencia del Error de Entrenamiento")
-plt.xlabel("Épocas")
-plt.ylabel("Error de Entrenamiento")
+plt.title("Convergencia del Error de Red Neural con una capa oculta de " + str(capas) + " Neuronas")
+plt.xlabel("Epocas")
+plt.ylabel("Error")
 plt.show()
