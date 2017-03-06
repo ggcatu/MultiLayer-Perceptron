@@ -7,7 +7,7 @@ class Red():
 
 	def __init__(self,arregloN, atr, eta):
 		self.red = []
-		numero = atr+1
+		numero = atr
 		eta = eta
 		for i in range(0,len(arregloN)):
 			if(i != len(arregloN)-1):
